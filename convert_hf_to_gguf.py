@@ -12417,6 +12417,41 @@ class ModernBertModel(BertModel):
         yield from super().modify_tensors(data_torch, name, bid)
 
 
+@ModelBase.register("MPNetModel", "MPNetForMaskedLM")
+class MPNetModel(BertModel):
+    model_arch = gguf.MODEL_ARCH.MPNET
+
+    def set_gguf_parameters(self):
+        super().set_gguf_parameters()
+        self.gguf_writer.add_relative_attn_buckets_count(self.hparams["relative_attention_num_buckets"])
+
+    def set_vocab(self):
+        # MPNet uses the same WordPiece tokenizer as BERT
+        # but its special tokens are <s>, </s>, <pad> instead of [CLS], [SEP], [PAD]
+        super().set_vocab()
+
+    def modify_tensors(self, data_torch: Tensor, name: str, bid: int | None) -> Iterable[tuple[str, Tensor]]:
+        # strip "mpnet." prefix
+        if name.startswith("mpnet."):
+            name = name[6:]
+
+        # skip position_ids and pooler (not needed for embeddings)
+        if name in ("embeddings.position_ids", "pooler.dense.weight", "pooler.dense.bias"):
+            return []
+
+        if name.startswith("cls.predictions"):
+            return []
+
+        # handle the shared relative attention bias:
+        # map encoder-level tensor to block 0 for T5-style fallback
+        if name == "encoder.relative_attention_bias.weight":
+            # HF shape: [num_buckets, num_heads] -> GGUF needs [num_heads, num_buckets]
+            data_torch = data_torch.T
+            return [("blk.0.attn_rel_b.weight", data_torch)]
+
+        return [(self.map_tensor_name(name), data_torch)]
+
+
 @ModelBase.register("ApertusForCausalLM")
 class ApertusModel(LlamaModel):
     model_arch = gguf.MODEL_ARCH.APERTUS

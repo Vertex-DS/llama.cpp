@@ -239,6 +239,7 @@ class TensorNameMap:
             "model.layers.{bid}.self_attn.q_proj_no_perm",               # llama-custom
             "layers.{bid}.attention.wq",                                 # llama-pth
             "encoder.layer.{bid}.attention.self.query",                  # bert
+            "encoder.layer.{bid}.attention.attn.q",
             "transformer.layer.{bid}.attention.q_lin",                   # distillbert
             "transformer.h.{bid}.attn.q_proj",                           # gpt-j
             "model.layers.layers.{bid}.self_attn.q_proj",                # plamo
@@ -258,6 +259,7 @@ class TensorNameMap:
             "model.layers.{bid}.self_attn.k_proj_no_perm",             # llama-custom
             "layers.{bid}.attention.wk",                               # llama-pth
             "encoder.layer.{bid}.attention.self.key",                  # bert
+            "encoder.layer.{bid}.attention.attn.k",
             "transformer.layer.{bid}.attention.k_lin",                 # distillbert
             "transformer.h.{bid}.attn.k_proj",                         # gpt-j
             "transformer.h.{bid}.attn.k",                              # refact
@@ -277,6 +279,7 @@ class TensorNameMap:
             "layers.{bid}.self_attn.v_proj",                             # embeddinggemma
             "layers.{bid}.attention.wv",                                 # llama-pth
             "encoder.layer.{bid}.attention.self.value",                  # bert
+            "encoder.layer.{bid}.attention.attn.v",
             "transformer.layer.{bid}.attention.v_lin",                   # distillbert
             "transformer.h.{bid}.attn.v_proj",                           # gpt-j
             "transformer.h.{bid}.attn.v",                                # refact
@@ -303,6 +306,7 @@ class TensorNameMap:
             "model.layers.{bid}.self_attn.linear_attn",                     # deci
             "layers.{bid}.attention.wo",                                    # llama-pth
             "encoder.layer.{bid}.attention.output.dense",                   # bert
+            "encoder.layer.{bid}.attention.attn.o",
             "layers.{bid}.attn.Wo",                                         # modern-bert
             "transformer.layer.{bid}.attention.out_lin",                    # distillbert
             "transformer.h.{bid}.attn.out_proj",                            # gpt-j
